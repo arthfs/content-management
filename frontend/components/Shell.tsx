@@ -2,12 +2,13 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getToken, setToken } from "@/lib/api";
+import { AUTH_REQUIRED, getToken, setToken } from "@/lib/api";
 
 export default function Shell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(!AUTH_REQUIRED);
   useEffect(() => {
+    if (!AUTH_REQUIRED) return;
     if (!getToken()) router.replace("/login");
     else setReady(true);
   }, [router]);
@@ -20,9 +21,11 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         <Link href="/videos">Videos</Link>
         <Link href="/settings">Settings</Link>
         <span style={{ flex: 1 }} />
-        <button className="secondary" onClick={() => { setToken(null); router.replace("/login"); }}>
-          Sign out
-        </button>
+        {AUTH_REQUIRED && (
+          <button className="secondary" onClick={() => { setToken(null); router.replace("/login"); }}>
+            Sign out
+          </button>
+        )}
       </nav>
       <main>{children}</main>
     </>

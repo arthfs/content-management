@@ -48,8 +48,21 @@ class VideoUpdate(BaseModel):
     video_url: str | None = Field(default=None, max_length=1000)
 
 
+class PublishOptions(BaseModel):
+    """What the user chose in the 'Post to TikTok' panel (TikTok content sharing guidelines)."""
+    privacy_level: str = ""  # must be one of creator_info.privacy_level_options; no default
+    allow_comment: bool = False
+    allow_duet: bool = False
+    allow_stitch: bool = False
+    commercial_content: bool = False
+    brand_organic: bool = False  # "Your brand" -> labeled Promotional content
+    brand_content: bool = False  # "Branded content" -> labeled Paid partnership
+    consent: bool = False  # user agreed to TikTok's Music Usage Confirmation (and Branded Content Policy)
+
+
 class ScheduleIn(BaseModel):
     scheduled_at: datetime | None = None  # None -> next best slot
+    options: PublishOptions | None = None
 
 
 class PostOut(BaseModel):
@@ -68,7 +81,10 @@ class VideoOut(BaseModel):
     caption: str
     hashtags: str
     video_url: str
+    has_file: bool = False
     status: str
+    publish_status: str | None = None
+    fail_reason: str | None = None
     scheduled_at: datetime | None
     created_at: datetime
     posts: list[PostOut] = []

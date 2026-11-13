@@ -6,7 +6,7 @@ import { api, fmt } from "@/lib/api";
 
 interface Analytics {
   title: string; platform: string; posted_at: string; metrics: Record<string, number>;
-  engagement_rate: number; suggestions: string[]; suggestions_source: string;
+  engagement_rate: number; suggestions: string[]; suggestions_source: string; audience: Record<string, number>;
 }
 
 export default function VideoAnalytics() {
@@ -30,6 +30,14 @@ export default function VideoAnalytics() {
             ))}
             <div className="card stat"><b>{a.engagement_rate}%</b>engagement rate</div>
           </div>
+          {Object.keys(a.audience).length > 0 && (
+            <div className="card">
+              <h3>Audience by age</h3>
+              {Object.entries(a.audience).map(([age, share]) => (
+                <div className="row" key={age}><span>{age}</span><span>{Math.round(share * 100)}%</span></div>
+              ))}
+            </div>
+          )}
           <div className="card">
             <h3>Suggestions <small>({a.suggestions_source === "gemini" ? "Gemini" : "rule-based"})</small></h3>
             <ul>{a.suggestions.map((s, i) => <li key={i}>{s}</li>)}</ul>

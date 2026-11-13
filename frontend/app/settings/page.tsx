@@ -10,8 +10,9 @@ export default function Settings() {
   useEffect(() => {
     api<Profile>("/api/me").then(setP).catch((e) => setMsg(e.message));
     api("/api/tiktok/status").then(setTt).catch(() => {});
-    const code = new URLSearchParams(window.location.search).get("code");
-    if (code) api(`/api/tiktok/callback?code=${encodeURIComponent(code)}`, { method: "POST" })
+    const qs = new URLSearchParams(window.location.search);
+    const code = qs.get("code");
+    if (code) api(`/api/tiktok/callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(qs.get("state") ?? "")}`, { method: "POST" })
       .then(() => { setMsg("TikTok connected"); return api("/api/tiktok/status").then(setTt); })
       .catch((e) => setMsg(e.message));
   }, []);
@@ -39,7 +40,7 @@ export default function Settings() {
           <label>Name<input value={p.name} onChange={(e) => setP({ ...p, name: e.target.value })} /></label>
           <label>Timezone (IANA, e.g. America/New_York)<input value={p.timezone} onChange={(e) => setP({ ...p, timezone: e.target.value })} /></label>
           <label>Country<input value={p.country} onChange={(e) => setP({ ...p, country: e.target.value })} /></label>
-          <label>Main follower age group
+          <label>Audience age group (fallback; your latest post's audience is used when available)
             <select value={p.audience_age} onChange={(e) => setP({ ...p, audience_age: e.target.value })}>
               {["13-17", "18-24", "25-34", "35+"].map((a) => <option key={a}>{a}</option>)}
             </select>

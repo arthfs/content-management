@@ -23,6 +23,9 @@ class User(Base):
     posts_per_day: Mapped[int] = mapped_column(Integer, default=2)
     tiktok_access_token: Mapped[str | None] = mapped_column(String(512), nullable=True)
     tiktok_open_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    # refresh tokens rotate on every refresh; always store the newest one
+    tiktok_refresh_token: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    tiktok_token_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     videos: Mapped[list["Video"]] = relationship(back_populates="user", cascade="all, delete-orphan")
 
 
@@ -34,12 +37,23 @@ class Video(Base):
     caption: Mapped[str] = mapped_column(Text, default="")
     hashtags: Mapped[str] = mapped_column(String(500), default="")
     video_url: Mapped[str] = mapped_column(String(1000), default="")
+    # name of the uploaded file inside settings.upload_dir (None when no file was uploaded)
+    file_path: Mapped[str | None] = mapped_column(String(255), nullable=True)
     # draft | scheduled | posted | failed
     status: Mapped[str] = mapped_column(String(16), default="draft", index=True)
     scheduled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # post settings the user chose (privacy, interactions, disclosure, consent); required for scheduled posts
+    publish_options: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    # last TikTok publish status (PROCESSING_UPLOAD, PUBLISH_COMPLETE, FAILED, ...) and failure reason
+    publish_status: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    fail_reason: Mapped[str | None] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     user: Mapped[User] = relationship(back_populates="videos")
     posts: Mapped[list["Post"]] = relationship(back_populates="video", cascade="all, delete-orphan")
+
+    @property
+    def has_file(self) -> bool:
+        return bool(self.file_path)
 
 
 class Post(Base):

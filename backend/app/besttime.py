@@ -1,4 +1,7 @@
-"""Heuristic best-time-to-post computation (local hours per audience age)."""
+"""Heuristic best-time-to-post computation (local hours per audience age).
+
+Keyed on the age of the overall *audience* (viewers, most of whom don't follow the account),
+not the follower base."""
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 

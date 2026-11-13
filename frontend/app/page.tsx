@@ -10,7 +10,10 @@ interface Dash {
   upcoming: { id: number; title: string; scheduled_at: string }[];
   posted_today: number; daily_goal: number; platforms: Record<string, boolean>;
 }
-interface BestTimes { timezone: string; local_hours: number[]; slots: { utc: string; local: string }[] }
+interface BestTimes {
+  timezone: string; audience_age: string; audience_source: "latest_post" | "profile";
+  local_hours: number[]; slots: { utc: string; local: string }[];
+}
 
 export default function Dashboard() {
   const [d, setD] = useState<Dash | null>(null);
@@ -66,6 +69,7 @@ export default function Dashboard() {
       {bt && (
         <div className="card">
           <h3>Best times to post ({bt.timezone})</h3>
+          <p>Targeting audience {bt.audience_age} ({bt.audience_source === "latest_post" ? "from your latest post" : "from Settings"})</p>
           <p>Daily sweet spots (local): {bt.local_hours.map((h) => `${h}:00`).join(", ")}</p>
           {bt.slots.slice(0, 4).map((s) => <div key={s.utc}>{fmt(s.utc)}</div>)}
         </div>
