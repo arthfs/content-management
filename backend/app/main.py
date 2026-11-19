@@ -44,7 +44,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(title="Content Manager API", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.frontend_origin],
+    allow_origins=[settings.frontend_origin.rstrip("/"), "http://localhost:3000"],
     allow_methods=["*"],
     allow_headers=["*"],
 )

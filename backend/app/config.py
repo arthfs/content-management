@@ -1,9 +1,13 @@
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import URL, make_url
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=Path(__file__).parent.parent / ".env",
+        extra="ignore"
+    )
 
     secret_key: str = "dev-insecure-change-me"
     database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/content_manager"

@@ -20,6 +20,8 @@ Read this before starting work. Update it at the end of every session: move fini
 - TikTok compliance with https://developers.tiktok.com/docs/en/ : creator info queried before every post (`GET /api/tiktok/creator-info`); user-chosen privacy validated against it (no default); comment/duet/stitch toggles (off by default, greyed when the creator disabled them); commercial-content disclosure + consent declaration in `frontend/components/PostPanel.tsx`; init/chunk/PUT per the media-transfer guide; status polling (`GET /api/videos/{id}/publish-status`, stores the public post id when available); documented error codes mapped to clear messages and shown on the video (`fail_reason`); OAuth `state` is a signed 10-minute token; access tokens refresh automatically and the rotated refresh token is stored; no watermarks/branding are added to videos.
 
 ## Open items (left behind)
+- [ ] **Registration verification pending**: Restart or redeploy the backend and retry signup from the configured frontend and localhost. End-to-end registration was not tested against a database in this session.
+- [ ] **Security follow-up**: Rotate credentials exposed earlier in this chat, including the database password, application secret, and external API credentials.
 - [x] ~~Frontend verification~~ — `npx tsc --noEmit` and `npm run build` previously passed; frontend source was not changed in this database/deployment update.
 - [ ] **User action required**: Set the Supabase PostgreSQL URL as `DATABASE_URL` in Render; create a separate local PostgreSQL DB and set `TEST_DATABASE_URL` before running backend tests.
 - [ ] **Verification pending**: Run all backend tests against PostgreSQL/Supabase. Previous 15-test pass was against MySQL and does not verify this database switch.
@@ -44,6 +46,8 @@ Read this before starting work. Update it at the end of every session: move fini
 - [x] ~~Deployment guides~~ — updated the main Vercel + Render + Supabase instructions in `.github/QUICK_START.md`, `.github/DEPLOYMENT_GUIDE.md`, `.github/DEPLOYMENT_CHECKLIST.md`, and `.github/ENV_TEMPLATES.md`.
 
 ## Log
+- 2026-11-19: Allowed `http://localhost:3000` alongside the configured frontend origin for development; redeployment and end-to-end signup remain pending.
+- 2026-11-19: Fixed trailing-slash CORS origin mismatch causing registration preflight 400 responses; verified configured-origin preflight and two isolated regression tests. End-to-end signup remains unverified.
 - 2026-11-03: MySQL switch, SQLite removal, single-user mode, audience wording, skills and this log added.
 - 2026-11-03: TikTok docs audit; Direct Post brought in line with the docs (see Done). 15 backend tests pass; frontend type check and build pass.
 - 2026-11-13: Pre-deployment readiness check complete. Created `QUICK_START.md`, `DEPLOYMENT_GUIDE.md`, and `TIKTOK_REGISTRATION.md`. All tests passing (15 backend, frontend build successful). Ready for Vercel + TikTok registration.
@@ -53,3 +57,4 @@ Read this before starting work. Update it at the end of every session: move fini
 - 2026-11-13: Supabase connection established over TLS; created app tables transactionally, enabled RLS and revoked public roles' table/sequence privileges. Verified model columns, backend reads, role privileges, and absence of public policies; no destructive test suite run. Supabase skills were installed under `.agents/skills/`, a valid project skill location.
 - 2026-11-13: Compared hosting options: Render's paid web service and persistent disk fit the current in-process scheduler and file uploads; Vercel FastAPI support would require scheduler and storage changes. Free Render sleeps and lacks persistent disks.
 - 2026-11-13: Owner accepts the free Render tier's limitations for now and plans to upgrade to the $7 plan later. Updated deployment guidance for the free tier and future persistent disk.
+- 2026-11-19: Preparing TikTok sandbox test. Added public `/terms` and `/privacy` pages (linked from login; optional `NEXT_PUBLIC_CONTACT_EMAIL`) for the portal's required URLs. Sandbox needs no code setting: add Login Kit + Content Posting API (Direct Post), scopes `user.info.basic`, `video.publish`, `video.upload`, `video.list`, HTTPS redirect `<vercel-domain>/settings`, and your account as a sandbox target user. Frontend type check passes; backend tests still need `TEST_DATABASE_URL`. No disconnect endpoint exists (policy points users to TikTok's app permissions).

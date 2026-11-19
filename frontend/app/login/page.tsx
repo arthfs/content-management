@@ -38,6 +38,10 @@ export default function LoginPage() {
         <button type="button" className="secondary" onClick={() => setMode(mode === "signin" ? "signup" : "signin")}>
           {mode === "signin" ? "Need an account?" : "Have an account?"}
         </button>
+        <p style={{ fontSize: 12 }}>
+          By continuing you agree to the <a href="/terms">Terms of Service</a> and{" "}
+          <a href="/privacy">Privacy Policy</a>.
+        </p>
       </form>
     </main>
   );

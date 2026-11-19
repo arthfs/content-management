@@ -31,6 +31,8 @@ On Render, attach a persistent disk mounted at `/var/data` and set `UPLOAD_DIR=/
 ## Login
 Login is off by default (`AUTH_REQUIRED=false`): every request acts as one local user (`DEFAULT_USER_EMAIL`), and the TikTok connection is stored on that user. Set `AUTH_REQUIRED=true` in `backend/.env` and `NEXT_PUBLIC_AUTH_REQUIRED=true` in `frontend/.env.local` to bring back sign-in/sign-up.
 
+Set `FRONTEND_ORIGIN` to your Vercel origin for deployment. The backend also allows `http://localhost:3000` for local development; other localhost ports are not allowed by default. Restart the backend after changing the setting.
+
 **Security warning:** Do not expose a deployment with `AUTH_REQUIRED=false` to the public internet. Anyone who can reach the app shares the same user and may access its content or use its connected TikTok account. Enable login on both backend and frontend before making the deployment public.
 
 ## Posting
